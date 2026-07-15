@@ -98,10 +98,37 @@ class BACnetOptionsFlow(OptionsFlow):
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
-        """Options form."""
+        """Options form with connection parameters."""
         if user_input is not None:
-            return self.async_create_entry(title="", data=user_input)
+            # Merge with existing config
+            new_data = dict(self._config_entry.data)
+            for key in ("gateway_ip", "gateway_port", "device_id", "polling_interval", "enable_cov"):
+                if key in user_input:
+                    new_data[key] = user_input[key]
+            return self.async_create_entry(title="", data=new_data)
+
+        config = self._config_entry.data
         return self.async_show_form(
             step_id="init",
-            data_schema=vol.Schema({}),
+            data_schema=vol.Schema(
+                {
+                    vol.Required(
+                        "gateway_ip",
+                        default=config.get("gateway_ip", "192.168.100.103"),
+                    ): str,
+                    vol.Optional(
+                        "gateway_port",
+                        default=config.get("gateway_port", DEFAULT_GATEWAY_PORT),
+                    ): int,
+                    vol.Optional(
+                        "device_id",
+                        default=config.get("device_id", DEFAULT_DEVICE_ID),
+                    ): int,
+                    vol.Optional(
+                        "polling_interval",
+                        default=config.get("polling_interval", DEFAULT_POLLING_INTERVAL),
+                    ): int,
+                }
+            ),
+            last_step=True,
         )

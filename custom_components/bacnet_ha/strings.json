@@ -19,5 +19,19 @@
     "abort": {
       "already_configured": "已配置。"
     }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "BACnet-HA — 选项",
+        "description": "修改连接参数。",
+        "data": {
+          "gateway_ip": "网关 IP",
+          "gateway_port": "网关端口",
+          "device_id": "设备 ID",
+          "polling_interval": "轮询间隔（秒）"
+        }
+      }
+    }
   }
 }

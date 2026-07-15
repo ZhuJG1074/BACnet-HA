@@ -13,5 +13,19 @@
         }
       }
     }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "BACnet-HA — Options",
+        "description": "Modify connection parameters.",
+        "data": {
+          "gateway_ip": "Gateway IP",
+          "gateway_port": "Gateway port",
+          "device_id": "Device ID",
+          "polling_interval": "Polling interval (s)"
+        }
+      }
+    }
   }
 }
