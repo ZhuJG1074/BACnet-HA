@@ -91,7 +91,9 @@ class BACnetOptionsFlow(OptionsFlow):
     """Minimal options flow."""
 
     def __init__(self, config_entry: ConfigEntry) -> None:
-        super().__init__(config_entry)
+        """Initialize."""
+        super().__init__()
+        self._config_entry = config_entry
 
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
