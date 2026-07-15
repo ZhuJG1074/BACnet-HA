@@ -134,8 +134,9 @@ async def async_setup_entry(
         ) from exc
 
     # Determine the device address to use for reads/writes
-    # Numeric device instance so BACpypes3 creates proper Address
-    device_address = str(entry_data.get("device_id", DEFAULT_DEVICE_ID))
+    # Route-aware BACnet address: <network>:<mac>@<gateway_ip>
+    # Network 11 (MS/TP), MAC 16, via 讯饶 Router1001-ARM-E
+    device_address = f"11:16@{gateway_ip}"
 
     # Lazy-import the coordinator
     BACnetCoordinator = _import_coordinator()
