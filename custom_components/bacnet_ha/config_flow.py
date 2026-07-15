@@ -107,7 +107,7 @@ class BACnetOptionsFlow(OptionsFlow):
                     new_data[key] = user_input[key]
             return self.async_create_entry(title="", data=new_data)
 
-        config = self._config_entry.data
+        config = {**self._config_entry.data, **self._config_entry.options}
         return self.async_show_form(
             step_id="init",
             data_schema=vol.Schema(
