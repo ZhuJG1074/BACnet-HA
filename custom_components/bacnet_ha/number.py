@@ -101,11 +101,8 @@ class BACnetNumber(CommandableBACnetEntity, NumberEntity):
 
     @property
     def available(self) -> bool:
-        """Entity is available only when coordinator data is fresh."""
+        """Entity is available through coordinator."""
         if not super().available:
-            return False
-        value = self._value()
-        if value is None:
             return False
         if self._flag_out_of_service:
             return False

@@ -63,10 +63,11 @@ class BACnetEntity(Entity):
 
     @property
     def available(self) -> bool:
-        """Entity is available only when coordinator data is fresh."""
-        # The entity is always 'available' as long as the coordinator has
-        # produced at least one successful update.  The coordinator's native
-        # backoff + UpdateFailed handling makes repeated outages visible.
+        """Entity is available as long as coordinator data exists.
+
+        Even if presentValue is None (e.g. on first load before poll),
+        the entity shows as 'unknown' rather than 'unavailable'.
+        """
         return self.coordinator.data is not None
 
     def _value(self) -> Any:

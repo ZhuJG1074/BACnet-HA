@@ -133,9 +133,7 @@ async def async_setup_entry(
         ) from exc
 
     # Determine the device address to use for reads/writes
-    device_address = gateway_ip
-    if gateway_port != DEFAULT_GATEWAY_PORT:
-        device_address = f"{gateway_ip}:{gateway_port}"
+    device_address = f"{gateway_ip}:{gateway_port}"
 
     # Lazy-import the coordinator
     BACnetCoordinator = _import_coordinator()
