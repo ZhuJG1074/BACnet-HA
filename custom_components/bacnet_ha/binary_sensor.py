@@ -17,6 +17,7 @@ from .coordinator import BACnetCoordinator
 from .const import (
     DEVICE_CLASS_MAP,
     DOMAIN,
+    OBJECT_TYPE_ANALOG_INPUT,
     OBJECT_TYPE_ANALOG_OUTPUT,
     OBJECT_TYPE_ANALOG_VALUE,
     OBJECT_TYPE_BINARY_INPUT,

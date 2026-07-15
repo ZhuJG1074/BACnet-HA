@@ -14,8 +14,10 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .coordinator import BACnetCoordinator
 from .const import (
     DEFAULT_COV_INCREMENT,
-    UNIT_SYSTEM_MAP,
     DOMAIN,
+    OBJECT_TYPE_MULTI_STATE_OUTPUT,
+    OBJECT_TYPE_MULTI_STATE_VALUE,
+    UNIT_SYSTEM_MAP,
 )
 from .entity import CommandableBACnetEntity
 
