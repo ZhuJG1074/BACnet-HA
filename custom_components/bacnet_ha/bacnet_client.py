@@ -219,6 +219,7 @@ class BACnetClient:
                 devices = await self.discover_devices(
                     timeout=5.0,
                     target_device_id=self._target_device_id,
+                    target_address=f"{self._gateway_ip}:{self._gateway_port or 47808}",
                 )
                 if devices:
                     _LOGGER.info(
@@ -310,6 +311,7 @@ class BACnetClient:
         self,
         timeout: float = 5.0,
         target_device_id: int | None = None,
+        target_address: str = "",
     ) -> list[dict[str, Any]]:
         """Send a Who-Is and collect I-Am responses.
 
@@ -338,6 +340,8 @@ class BACnetClient:
             if target_device_id:
                 who_is_kwargs["low_limit"] = target_device_id
                 who_is_kwargs["high_limit"] = target_device_id
+            if target_address:
+                who_is_kwargs["address"] = Address(target_address)
 
             who_is_futures = await self._app.who_is(**who_is_kwargs)
 
