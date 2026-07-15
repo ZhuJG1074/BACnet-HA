@@ -1,0 +1,23 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "BACnet-HA — 配置",
+        "description": "通过讯饶 Router1001-ARM-E 网关连接 Honeywell HT9612D3100 温控器。",
+        "data": {
+          "name": "集成名称",
+          "local_ip": "HA 本地 IP",
+          "gateway_ip": "网关 IP（讯饶 Router）",
+          "gateway_port": "网关端口",
+          "device_id": "设备 ID"
+        }
+      }
+    },
+    "error": {
+      "unknown": "未知错误，请检查日志。"
+    },
+    "abort": {
+      "already_configured": "已配置。"
+    }
+  }
+}

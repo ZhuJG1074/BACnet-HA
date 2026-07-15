@@ -1,0 +1,17 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "BACnet-HA — Configuration",
+        "description": "Connect Honeywell HT9612D3100 via 讯饶 Router1001-ARM-E gateway.",
+        "data": {
+          "name": "Integration name",
+          "local_ip": "HA local IP",
+          "gateway_ip": "Gateway IP (讯饶 Router)",
+          "gateway_port": "Gateway port",
+          "device_id": "Device ID"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "domain": "bacnet_ha",
+  "name": "BACnet-HA",
+  "codeowners": ["@z-h"],
+  "config_flow": true,
+  "dependencies": [],
+  "documentation": "https://github.com/z-h/BACnet-HA",
+  "integration_type": "hub",
+  "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/z-h/BACnet-HA/issues",
+  "loggers": ["custom_components.bacnet_ha"],
+  "requirements": ["bacpypes3>=0.0.106"],
+  "version": "0.1.0",
+  "zeroconf": []
+}

@@ -1,0 +1,3 @@
+# BACnet-HA dependencies
+# Install with: pip install -r requirements.txt
+bacpypes3>=0.0.106
