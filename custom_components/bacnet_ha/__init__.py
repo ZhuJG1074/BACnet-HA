@@ -25,6 +25,7 @@ from homeassistant.helpers.typing import ConfigType
 from .const import (
     DEFAULT_COV_INCREMENT,
     DEFAULT_COV_LIFETIME,
+    DEFAULT_DEVICE_ID,
     DEFAULT_DEVICE_INSTANCE,
     DEFAULT_DOMAIN_MAP,
     DEFAULT_ENABLE_COV,
