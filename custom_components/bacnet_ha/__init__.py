@@ -133,7 +133,8 @@ async def async_setup_entry(
         ) from exc
 
     # Determine the device address to use for reads/writes
-    device_address = f"{gateway_ip}:{gateway_port}"
+    # Use device instance (e.g. "9600") so BACpypes3 routes through the gateway
+    device_address = str(entry_data.get("device_id", DEFAULT_DEVICE_ID))
 
     # Lazy-import the coordinator
     BACnetCoordinator = _import_coordinator()

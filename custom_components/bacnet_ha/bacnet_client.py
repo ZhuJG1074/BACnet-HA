@@ -198,6 +198,36 @@ class BACnetClient:
             self._app = None
             raise
 
+        # Discover the target device via Who-Is so BACpypes3 learns its route
+        if self._target_device_id:
+            try:
+                _LOGGER.info(
+                    "Discovering target device %d via Who-Is ...",
+                    self._target_device_id,
+                )
+                devices = await self.discover_devices(
+                    timeout=5.0,
+                    target_device_id=self._target_device_id,
+                )
+                if devices:
+                    _LOGGER.info(
+                        "Target device %d discovered at %s",
+                        self._target_device_id,
+                        devices[0].get("address", "?"),
+                    )
+                else:
+                    _LOGGER.warning(
+                        "Target device %d not found via Who-Is — "
+                        "will try direct addressing",
+                        self._target_device_id,
+                    )
+            except Exception as exc:  # noqa: BLE001
+                _LOGGER.warning(
+                    "Who-Is discovery for device %d failed: %s",
+                    self._target_device_id,
+                    exc,
+                )
+
     async def _wait_for_transport(self, timeout: float = 5.0) -> None:
         """Await the UDP transport tasks so the socket is actually bound."""
         server = getattr(self._app, "normal", None)
