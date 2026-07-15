@@ -101,6 +101,15 @@ class BACnetCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             update_interval=timedelta(seconds=polling_interval),
         )
 
+        # Initialise data with None values so entities are available immediately
+        self.data = {
+            f"{obj['object_type']}:{obj['instance']}": {
+                "presentValue": None,
+                "statusFlags": None,
+            }
+            for obj in objects
+        }
+
     # ------------------------------------------------------------------
     # First refresh — sets up COV subscriptions
     # ------------------------------------------------------------------
