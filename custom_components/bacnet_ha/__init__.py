@@ -140,7 +140,7 @@ async def async_setup_entry(
     gateway_ip = entry_data.get("gateway_ip", "")
     ms_rtp_network = entry_data.get("ms_rtp_network", DEFAULT_MSRTP_NETWORK)
     ms_rtu_mac = entry_data.get("ms_rtu_mac", DEFAULT_MSRTU_MAC)
-    device_address = f"{ms_rtp_network}:{ms_rtu_mac}@{gateway_ip}"
+    device_address = str(entry_data.get("device_id", DEFAULT_DEVICE_ID))
 
     # Lazy-import the coordinator
     BACnetCoordinator = _import_coordinator()
