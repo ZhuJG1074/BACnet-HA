@@ -130,6 +130,17 @@ class BACnetClient:
         # Shared BACnetClient identification (for multi-entry reference counting)
         self._gw_key = (local_port, self._gateway_ip)
 
+    def _make_addr(self, device_address: str) -> Address:
+        """Create a BACpypes3 Address.
+
+        Numeric strings (e.g. '9600') → deviceInstance Address (correct).
+        IP strings (e.g. '192.168.100.103') → IPv4Address (fallback).
+        """
+        try:
+            return Address(int(device_address))
+        except (ValueError, TypeError):
+            return Address(device_address)
+
     @staticmethod
     def _derive_device_instance(local_ip: str, local_port: int) -> int:
         """Derive a stable, unique device instance from the local address.
@@ -394,7 +405,7 @@ class BACnetClient:
         if self._app is None:
             raise RuntimeError("Client not connected")
 
-        addr = Address(device_address)
+        addr = self._make_addr(device_address)
         _LOGGER.debug("Reading object list from %s (device_id=%s)", _mask_address(device_address), device_id)
 
         objects: list[dict[str, Any]] = []
@@ -512,7 +523,7 @@ class BACnetClient:
         if self._app is None:
             raise RuntimeError("Client not connected")
 
-        addr = Address(device_address)
+        addr = self._make_addr(device_address)
         type_str = self._int_to_object_type_str(object_type)
         oid = ObjectIdentifier((type_str, instance))
 
@@ -589,7 +600,7 @@ class BACnetClient:
         if not param_list:
             return {}
 
-        addr = Address(device_address)
+        addr = self._make_addr(device_address)
         try:
             results = await asyncio.wait_for(
                 self._app.read_property_multiple(addr, param_list),
@@ -669,7 +680,7 @@ class BACnetClient:
         if self._app is None:
             raise RuntimeError("Client not connected")
 
-        addr = Address(device_address)
+        addr = self._make_addr(device_address)
         type_str = self._int_to_object_type_str(object_type)
         oid = ObjectIdentifier((type_str, instance))
 
@@ -761,7 +772,7 @@ class BACnetClient:
         if self._app is None:
             raise RuntimeError("Client not connected")
 
-        addr = Address(device_address)
+        addr = self._make_addr(device_address)
         type_str = self._int_to_object_type_str(object_type)
         oid = ObjectIdentifier((type_str, instance))
         sub_key = f"{device_address}:{object_type}:{instance}"

@@ -134,7 +134,7 @@ async def async_setup_entry(
         ) from exc
 
     # Determine the device address to use for reads/writes
-    # Use device instance (e.g. "9600") so BACpypes3 routes through the gateway
+    # Numeric device instance so BACpypes3 creates proper Address
     device_address = str(entry_data.get("device_id", DEFAULT_DEVICE_ID))
 
     # Lazy-import the coordinator

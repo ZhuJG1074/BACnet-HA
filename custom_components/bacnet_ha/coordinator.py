@@ -121,7 +121,14 @@ class BACnetCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         # --- First run: set up COV subscriptions ---
         first_run = not self._cov_subscriptions and not self._polled_objects
         if first_run:
-            await self._setup_subscriptions()
+            try:
+                await self._setup_subscriptions()
+            except Exception as exc:  # noqa: BLE001
+                _LOGGER.warning(
+                    "COV subscription setup failed: %s — "
+                    "falling back to polling only",
+                    exc,
+                )
 
         # Always poll ALL objects — COV is supplementary, polling is the
         # reliable baseline.  This ensures values update even when COV
