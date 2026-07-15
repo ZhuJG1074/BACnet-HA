@@ -14,6 +14,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .coordinator import BACnetCoordinator
 from .const import (
     DOMAIN,
+    OBJECT_TYPE_ANALOG_VALUE,
     OBJECT_TYPE_BINARY_OUTPUT,
     OBJECT_TYPE_BINARY_VALUE,
     OBJECT_TYPE_MULTI_STATE_OUTPUT,
@@ -41,6 +42,7 @@ async def async_setup_entry(
             OBJECT_TYPE_BINARY_VALUE,
             OBJECT_TYPE_MULTI_STATE_OUTPUT,
             OBJECT_TYPE_MULTI_STATE_VALUE,
+            OBJECT_TYPE_ANALOG_VALUE,  # PowerSwitch (0=off, 1=on)
         }:
             entities.append(
                 BACnetSwitch(coordinator, obj_key, obj, entry.entry_id)
@@ -73,11 +75,8 @@ class BACnetSwitch(CommandableBACnetEntity, SwitchEntity):
 
     @property
     def available(self) -> bool:
-        """Entity is available only when coordinator data is fresh."""
+        """Entity is available through coordinator."""
         if not super().available:
-            return False
-        value = self._value()
-        if value is None:
             return False
         if self._flag_out_of_service:
             return False

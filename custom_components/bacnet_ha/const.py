@@ -161,7 +161,7 @@ HONEYWELL_FT82_PRESET: list[dict[str, Any]] = [
         "mode": "commandable",
         "commandable": True,
         "units": "celcius",
-        "domain": "climate",
+        "domain": "number",
         "device_class": SensorDeviceClass.TEMPERATURE,
     },
     {
@@ -172,8 +172,9 @@ HONEYWELL_FT82_PRESET: list[dict[str, Any]] = [
         "mode": "commandable",
         "commandable": True,
         "units": "",
-        "domain": "number",
+        "domain": "select",
         "device_class": None,
+        "options": ["自动", "高风", "中风", "低风"],
     },
     {
         "object_type": OBJECT_TYPE_ANALOG_VALUE,
@@ -183,8 +184,9 @@ HONEYWELL_FT82_PRESET: list[dict[str, Any]] = [
         "mode": "commandable",
         "commandable": True,
         "units": "",
-        "domain": "number",
+        "domain": "select",
         "device_class": None,
+        "options": ["制冷", "制热", "送风"],
     },
     {
         "object_type": OBJECT_TYPE_ANALOG_VALUE,
@@ -194,7 +196,7 @@ HONEYWELL_FT82_PRESET: list[dict[str, Any]] = [
         "mode": "commandable",
         "commandable": True,
         "units": "",
-        "domain": "number",
+        "domain": "switch",
         "device_class": None,
     },
 ]

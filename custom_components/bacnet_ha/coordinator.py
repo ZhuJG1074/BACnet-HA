@@ -328,10 +328,17 @@ class BACnetCoordinator(DataUpdateCoordinator[dict[str, Any]]):
     }
 
     def get_domain_for_object(self, obj: dict[str, Any]) -> str:
-        """Determine the HA domain for a BACnet object, respecting user overrides."""
+        """Determine the HA domain for a BACnet object, respecting user overrides.
+
+        Priority: user domain_overrides > preset domain > default by type.
+        """
         obj_key = f"{obj['object_type']}:{obj['instance']}"
         if obj_key in self.domain_overrides:
             return self.domain_overrides[obj_key]
+        # Use preset domain if specified (e.g. "select" for fan/system switch)
+        domain = obj.get("domain")
+        if domain:
+            return domain
         return self._default_domain_for(obj)
 
     def _default_domain_for(self, obj: dict[str, Any]) -> str:
