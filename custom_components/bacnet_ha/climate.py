@@ -20,6 +20,7 @@ from homeassistant.util.unit_system import UnitOfTemperature
 
 from .coordinator import BACnetCoordinator
 from .const import (
+    DOMAIN,
     OBJECT_TYPE_ANALOG_OUTPUT,
     OBJECT_TYPE_ANALOG_VALUE,
 )
@@ -34,7 +35,7 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up BACnet climate platform."""
-    coordinator: BACnetCoordinator = hass.data[entry.entry_id]["coordinator"]
+    coordinator: BACnetCoordinator = hass.data[DOMAIN][entry.entry_id]["coordinator"]
 
     entities: list[ClimateEntity] = []
     for obj in coordinator.objects:

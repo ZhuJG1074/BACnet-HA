@@ -13,6 +13,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .coordinator import BACnetCoordinator
 from .const import (
+    DOMAIN,
     OBJECT_TYPE_BINARY_OUTPUT,
     OBJECT_TYPE_BINARY_VALUE,
     OBJECT_TYPE_MULTI_STATE_OUTPUT,
@@ -29,7 +30,7 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up BACnet switch platform."""
-    coordinator: BACnetCoordinator = hass.data[entry.entry_id]["coordinator"]
+    coordinator: BACnetCoordinator = hass.data[DOMAIN][entry.entry_id]["coordinator"]
 
     entities: list[SwitchEntity] = []
     for obj in coordinator.objects:

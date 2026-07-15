@@ -27,6 +27,7 @@ from .const import (
     OBJECT_TYPE_MULTI_STATE_VALUE,
     SUPPORTED_SENSOR_OBJECT_TYPES,
     UNIT_SYSTEM_MAP,
+    DOMAIN,
 )
 from .entity import BACnetEntity, ReadBACnetEntity
 
@@ -37,7 +38,7 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up BACnet sensor platform."""
-    coordinator: BACnetCoordinator = hass.data[entry.entry_id]["coordinator"]
+    coordinator: BACnetCoordinator = hass.data[DOMAIN][entry.entry_id]["coordinator"]
 
     entities: list[SensorEntity] = []
     for obj in coordinator.objects:

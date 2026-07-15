@@ -13,8 +13,9 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .coordinator import BACnetCoordinator
 from .const import (
-    OBJECT_TYPE_MULTI_STATE_OUTPUT,
-    OBJECT_TYPE_MULTI_STATE_VALUE,
+    DEFAULT_COV_INCREMENT,
+    UNIT_SYSTEM_MAP,
+    DOMAIN,
 )
 from .entity import CommandableBACnetEntity
 
@@ -27,7 +28,7 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up BACnet select platform."""
-    coordinator: BACnetCoordinator = hass.data[entry.entry_id]["coordinator"]
+    coordinator: BACnetCoordinator = hass.data[DOMAIN][entry.entry_id]["coordinator"]
 
     entities: list[SelectEntity] = []
     for obj in coordinator.objects:

@@ -14,13 +14,14 @@ from homeassistant.util.unit_system import UnitOfTemperature
 
 from .coordinator import BACnetCoordinator
 from .const import (
+    DEFAULT_COV_INCREMENT,
+    DEFAULT_WRITE_PRIORITY,
     DEVICE_CLASS_MAP,
-    OBJECT_TYPE_ANALOG_OUTPUT,
-    OBJECT_TYPE_ANALOG_VALUE,
-    OBJECT_TYPE_MULTI_STATE_OUTPUT,
-    OBJECT_TYPE_MULTI_STATE_VALUE,
+    MAX_COV_INCREMENT,
+    MIN_COV_INCREMENT,
     SUPPORTED_NUMBER_OBJECT_TYPES,
     UNIT_SYSTEM_MAP,
+    DOMAIN,
 )
 from .entity import CommandableBACnetEntity
 
@@ -33,7 +34,7 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up BACnet number platform."""
-    coordinator: BACnetCoordinator = hass.data[entry.entry_id]["coordinator"]
+    coordinator: BACnetCoordinator = hass.data[DOMAIN][entry.entry_id]["coordinator"]
 
     entities: list[NumberEntity] = []
     for obj in coordinator.objects:
