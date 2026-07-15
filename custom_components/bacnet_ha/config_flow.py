@@ -14,6 +14,8 @@ from .const import (
     DOMAIN,
     DEFAULT_GATEWAY_PORT,
     DEFAULT_DEVICE_ID,
+    DEFAULT_MSRTP_NETWORK,
+    DEFAULT_MSRTU_MAC,
     DEFAULT_POLLING_INTERVAL,
     DEFAULT_ENABLE_COV,
     HONEYWELL_FT82_PRESET,
@@ -63,6 +65,8 @@ class BACnetConfigFlow(ConfigFlow, domain=DOMAIN):
                     vol.Required("gateway_ip", default="192.168.100.103"): str,
                     vol.Optional("gateway_port", default=DEFAULT_GATEWAY_PORT): int,
                     vol.Optional("device_id", default=DEFAULT_DEVICE_ID): int,
+                    vol.Optional("ms_rtp_network", default=DEFAULT_MSRTP_NETWORK): int,
+                    vol.Optional("ms_rtu_mac", default=DEFAULT_MSRTU_MAC): int,
                 }
             ),
             errors={},
@@ -102,7 +106,8 @@ class BACnetOptionsFlow(OptionsFlow):
         if user_input is not None:
             # Merge with existing config
             new_data = dict(self._config_entry.data)
-            for key in ("gateway_ip", "gateway_port", "device_id", "polling_interval", "enable_cov"):
+            for key in ("gateway_ip", "gateway_port", "device_id", "ms_rtu_mac",
+                        "ms_rtp_network", "polling_interval", "enable_cov"):
                 if key in user_input:
                     new_data[key] = user_input[key]
             return self.async_create_entry(title="", data=new_data)
@@ -123,6 +128,14 @@ class BACnetOptionsFlow(OptionsFlow):
                     vol.Optional(
                         "device_id",
                         default=config.get("device_id", DEFAULT_DEVICE_ID),
+                    ): int,
+                    vol.Optional(
+                        "ms_rtp_network",
+                        default=config.get("ms_rtp_network", DEFAULT_MSRTP_NETWORK),
+                    ): int,
+                    vol.Optional(
+                        "ms_rtu_mac",
+                        default=config.get("ms_rtu_mac", DEFAULT_MSRTU_MAC),
                     ): int,
                     vol.Optional(
                         "polling_interval",

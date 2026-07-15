@@ -31,6 +31,8 @@ from .const import (
     DEFAULT_ENABLE_COV,
     DEFAULT_GATEWAY_PORT,
     DEFAULT_LOCAL_PORT,
+    DEFAULT_MSRTP_NETWORK,
+    DEFAULT_MSRTU_MAC,
     DEFAULT_POLLING_INTERVAL,
     DEFAULT_USE_DESCRIPTION,
     DEFAULT_WRITE_PRIORITY,
@@ -135,8 +137,10 @@ async def async_setup_entry(
 
     # Determine the device address to use for reads/writes
     # Route-aware BACnet address: <network>:<mac>@<gateway_ip>
-    # Network 11 (MS/TP), MAC 16, via 讯饶 Router1001-ARM-E
-    device_address = f"11:16@{gateway_ip}"
+    gateway_ip = entry_data.get("gateway_ip", "")
+    ms_rtp_network = entry_data.get("ms_rtp_network", DEFAULT_MSRTP_NETWORK)
+    ms_rtu_mac = entry_data.get("ms_rtu_mac", DEFAULT_MSRTU_MAC)
+    device_address = f"{ms_rtp_network}:{ms_rtu_mac}@{gateway_ip}"
 
     # Lazy-import the coordinator
     BACnetCoordinator = _import_coordinator()
