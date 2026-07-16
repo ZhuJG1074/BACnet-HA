@@ -1,7 +1,7 @@
 {
   "name": "BACnet-HA",
   "filename": "BACnet-HA.zip",
-  "release": "0.23.0",
+  "release": "0.24.0",
   "hide_default_branch": false,
   "render_readme": true,
   "country": ["CN"],
