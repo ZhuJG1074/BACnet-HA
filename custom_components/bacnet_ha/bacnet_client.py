@@ -198,36 +198,15 @@ class BACnetClient:
             self._target_device_id,
         )
 
-        # Try ForeignApplication first (cross-subnet BBMD registration)
-        from bacpypes3.ipv4.app import ForeignApplication
+        # Use NormalApplication (supports broadcast for same-subnet discovery)
+        from bacpypes3.ipv4.app import NormalApplication
 
-        try:
-            self._app = ForeignApplication(device_object, local_addr)
-            _LOGGER.info(
-                "ForeignApplication created on %s (gateway=%s)",
-                local_addr,
-                _mask_address(self._gateway_ip) if self._gateway_ip else "none",
-            )
-
-            # Register with the gateway as a foreign device
-            if self._gateway_ip:
-                gw_addr = IPv4Address(
-                    f"{self._gateway_ip}:{self._gateway_port or 47808}"
-                )
-                await self._register_foreign(gw_addr)
-        except Exception as exc:
-            _LOGGER.warning(
-                "ForeignApplication failed (%s), falling back to NormalApplication",
-                exc,
-            )
-            from bacpypes3.ipv4.app import NormalApplication
-
-            self._app = NormalApplication(device_object, local_addr)
-            _LOGGER.info(
-                "NormalApplication created on %s (gateway=%s)",
-                local_addr,
-                _mask_address(self._gateway_ip) if self._gateway_ip else "none",
-            )
+        self._app = NormalApplication(device_object, local_addr)
+        _LOGGER.info(
+            "NormalApplication created on %s (gateway=%s)",
+            local_addr,
+            _mask_address(self._gateway_ip) if self._gateway_ip else "none",
+        )
         _LOGGER.info(
             "Route-aware addressing enabled, address format: <net>:<mac>@<gateway>"
         )
@@ -277,10 +256,9 @@ class BACnetClient:
                     self._target_device_id,
                 )
                 devices = await self.discover_devices(
-                    timeout=5.0,
-                    target_device_id=self._target_device_id,
-                    target_address=f"{self._gateway_ip}:{self._gateway_port or 47808}",
-                )
+                                    timeout=5.0,
+                                    target_device_id=self._target_device_id,
+                                )
                 if devices:
                     _LOGGER.info(
                         "Target device %d discovered at %s",
@@ -371,14 +349,12 @@ class BACnetClient:
         self,
         timeout: float = 5.0,
         target_device_id: int | None = None,
-        target_address: str = "",
     ) -> list[dict[str, Any]]:
-        """Send a Who-Is and collect I-Am responses.
+        """Send a Who-Is broadcast and collect I-Am responses.
 
-        If *target_device_id* is provided, a targeted Who-Is is sent.
-        Otherwise a global broadcast is sent.  The BACnet gateway (e.g.
-        讯饶 Router1001-ARM-E) forwards the broadcast across subnets
-        automatically.
+        On the local subnet the broadcast reaches the BACnet gateway
+        (e.g. 讯饶 Router1001-ARM-E) which forwards it to the MS/TP
+        network. The MS/TP device responds with I-Am.
         """
         if self._app is None:
             raise RuntimeError("Client not connected")
@@ -388,7 +364,7 @@ class BACnetClient:
 
         if target_device_id:
             _LOGGER.debug(
-                "Sending targeted Who-Is for device %d (timeout=%.1fs)",
+                "Sending Who-Is broadcast for device %d (timeout=%.1fs)",
                 target_device_id,
                 timeout,
             )
@@ -400,8 +376,6 @@ class BACnetClient:
             if target_device_id:
                 who_is_kwargs["low_limit"] = target_device_id
                 who_is_kwargs["high_limit"] = target_device_id
-            if target_address:
-                who_is_kwargs["address"] = Address(target_address)
 
             who_is_futures = await self._app.who_is(**who_is_kwargs)
 
