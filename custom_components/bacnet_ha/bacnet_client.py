@@ -135,6 +135,7 @@ class BACnetClient:
         # and tries Who-Is-Router-To-Network (broadcast, won't cross subnets)
         from bacpypes3.settings import settings as _bacpypes_settings
         _bacpypes_settings["route_aware"] = True
+        _bacpypes_settings.route_aware = True  # attribute-style, same result
 
     def _make_addr(self, device_address: str) -> Address:
         """Create a BACpypes3 Address.
@@ -203,26 +204,9 @@ class BACnetClient:
             local_addr,
             _mask_address(self._gateway_ip) if self._gateway_ip else "direct",
         )
-
-        # Manually add the BACnet router for the MS/TP network
-        # This tells BACpypes3: "to reach Network 11, send via the gateway"
-        # Without this, the stack tries Who-Is-Router-To-Network (broadcast)
-        if self._gateway_ip:
-            try:
-                from bacpypes3.pdu import Address as _Addr
-
-                router_addr = _Addr(
-                    f"{self._gateway_ip}:{self._gateway_port or 47808}"
-                )
-                self._app.nsap.update_router_references(
-                    snet=None, address=router_addr, dnets=[11]
-                )
-                _LOGGER.debug(
-                    "Added router for network 11: %s",
-                    router_addr,
-                )
-            except Exception as exc:  # noqa: BLE001
-                _LOGGER.warning("Failed to add BACnet router: %s", exc)
+        _LOGGER.info(
+            "Route-aware addressing enabled, address format: <net>:<mac>@<gateway>"
+        )
 
         # Wait for the UDP transport to be ready.
         try:
