@@ -130,6 +130,12 @@ class BACnetClient:
         # Shared BACnetClient identification (for multi-entry reference counting)
         self._gw_key = (local_port, self._gateway_ip)
 
+        # Enable route-aware addressing so the @ syntax works
+        # Without this, BACpypes3 ignores the router IP in the address
+        # and tries Who-Is-Router-To-Network (broadcast, won't cross subnets)
+        from bacpypes3.settings import settings as _bacpypes_settings
+        _bacpypes_settings["route_aware"] = True
+
     def _make_addr(self, device_address: str) -> Address:
         """Create a BACpypes3 Address.
 
