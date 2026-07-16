@@ -183,11 +183,11 @@ class BACnetClient:
         return device_object, local_addr
 
     async def connect(self) -> None:
-        """Create the BACpypes3 NormalApplication and bind to the network.
+        """Create the BACpypes3 application and bind to the network.
 
-        This integration does NOT use BBMD / Foreign Device Registration.
-        The BACnet gateway (e.g. 讯饶 Router1001-ARM-E) handles cross-subnet
-        routing natively, so a NormalApplication suffices.
+        Uses NormalApplication for same-subnet or route-aware communication.
+        Falls back to ForeignApplication registration if the gateway supports
+        BBMD (allows cross-subnet BACnet/IP communication).
         """
         device_object, local_addr = self._build_app_args()
 
@@ -198,15 +198,65 @@ class BACnetClient:
             self._target_device_id,
         )
 
-        self._app = NormalApplication(device_object, local_addr)
-        _LOGGER.info(
-            "BACnet client connected on %s (gateway=%s)",
-            local_addr,
-            _mask_address(self._gateway_ip) if self._gateway_ip else "direct",
-        )
+        # Try ForeignApplication first (cross-subnet BBMD registration)
+        from bacpypes3.ipv4.app import ForeignApplication
+
+        try:
+            self._app = ForeignApplication(device_object, local_addr)
+            _LOGGER.info(
+                "ForeignApplication created on %s (gateway=%s)",
+                local_addr,
+                _mask_address(self._gateway_ip) if self._gateway_ip else "none",
+            )
+
+            # Register with the gateway as a foreign device
+            if self._gateway_ip:
+                gw_addr = IPv4Address(
+                    f"{self._gateway_ip}:{self._gateway_port or 47808}"
+                )
+                await self._register_foreign(gw_addr)
+        except Exception as exc:
+            _LOGGER.warning(
+                "ForeignApplication failed (%s), falling back to NormalApplication",
+                exc,
+            )
+            from bacpypes3.ipv4.app import NormalApplication
+
+            self._app = NormalApplication(device_object, local_addr)
+            _LOGGER.info(
+                "NormalApplication created on %s (gateway=%s)",
+                local_addr,
+                _mask_address(self._gateway_ip) if self._gateway_ip else "none",
+            )
         _LOGGER.info(
             "Route-aware addressing enabled, address format: <net>:<mac>@<gateway>"
         )
+
+    async def _register_foreign(self, bbmd_address: IPv4Address) -> None:
+        """Register as a foreign device with the gateway (BBMD).
+
+        This allows cross-subnet BACnet/IP communication. The gateway
+        forwards all relevant BACnet messages to this application.
+
+        TTL = 300 seconds (5 minutes); auto-renew happens via the
+        BIPForeign stack.
+        """
+        try:
+            await self._app.register(bbmd_address, ttl=300)  # type: ignore[union-attr]
+            _LOGGER.info(
+                "Registered as foreign device with BBMD at %s (TTL=300s)",
+                bbmd_address,
+            )
+        except AttributeError:
+            _LOGGER.debug(
+                "ForeignDevice registration not supported by application type"
+            )
+        except Exception as exc:  # noqa: BLE001
+            _LOGGER.warning(
+                "Foreign device registration with %s failed: %s",
+                bbmd_address,
+                exc,
+            )
 
         # Wait for the UDP transport to be ready.
         try:
