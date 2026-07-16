@@ -10,6 +10,6 @@
   "issue_tracker": "https://github.com/z-h/BACnet-HA/issues",
   "loggers": ["custom_components.bacnet_ha"],
   "requirements": ["bacpypes3>=0.0.106"],
-  "version": "0.22.0",
+  "version": "0.23.0",
   "zeroconf": []
 }
